@@ -71,7 +71,10 @@ func ExtractDomainInfo(route string, c *ssllabs.Client) (domainInfo DomainInfo ,
 		err = ErrDomainNotFound
 		return
 	}
-	var url, _ = url.Parse(route)
+	var url, urlError = url.Parse(route)
+	if urlError != nil {
+		err = ErrUrlMalformed
+	}
 	if url.Scheme == "" {
 		fmt.Println(hostInfo.Protocol)
 		url.Scheme = hostInfo.Protocol

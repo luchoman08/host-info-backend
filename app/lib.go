@@ -2,7 +2,7 @@ package app
 
 import (
 	"fmt"
-	"github.com/badoux/goscraper"
+	"github.com/luchoman08/goscraper"
 	"github.com/likexian/whois-go"
 	"github.com/likexian/whois-parser-go"
 	"github.com/luchoman08/ssllabs"
@@ -26,7 +26,7 @@ func parseWhoIsText(text string ) map[string]string {
 	for i:=0; i< len(whoisLines); i++ {
 		if(strings.Contains(whoisLines[i], ":")) {
 			var split = strings.Split(whoisLines[i], ":");
-			keyValue[split[0]] = split[1]
+			keyValue[split[0]] = strings.Trim(split[1], " ")
 		}
 	}
 	return keyValue
@@ -66,17 +66,20 @@ func extractWebPageInfo(url url.URL)  (WebPageInfo, error) {
 
 func ExtractDomainInfo(route string, c *ssllabs.Client) (domainInfo DomainInfo , err error) {
 	domainInfo = DomainInfo{}
-	hostInfo, ssll_err := c.GetDetailedReport(route)
-	if ssll_err != nil {
-		err = ErrDomainNotFound
-		return
-	}
+	fmt.Println(route, "ruta ")
 	var url, urlError = url.Parse(route)
 	if urlError != nil {
+		fmt.Println("Url format error")
 		err = ErrUrlMalformed
+		return
+	}
+
+	hostInfo, ssll_err := c.GetDetailedReport(route)
+	if ssll_err != nil {
+		err = ssll_err
+		return
 	}
 	if url.Scheme == "" {
-		fmt.Println(hostInfo.Protocol)
 		url.Scheme = hostInfo.Protocol
 	}
 	var info, webError = extractWebPageInfo(*url)

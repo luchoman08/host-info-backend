@@ -51,6 +51,19 @@ func extractServerInfo(endpoint ssllabs.Endpoint) ServerInfo {
 }
 
 
+func normalizePageIcoUrl(route string, mainUrl url.URL) string {
+	var iconUrl, _ = url.Parse(route)
+	if iconUrl.Scheme == "" {
+		iconUrl.Scheme = mainUrl.Scheme
+	}
+	if iconUrl.Host == "" {
+		iconUrl.Host = mainUrl.Host
+	}
+	fmt.Println(iconUrl.Scheme)
+ 	return iconUrl.String()
+}
+
+
 func extractWebPageInfo(url url.URL)  (WebPageInfo, error) {
 	var webPageInfo = WebPageInfo{}
 	s, err := goscraper.Scrape(url.String(), 5)
@@ -59,11 +72,22 @@ func extractWebPageInfo(url url.URL)  (WebPageInfo, error) {
 		fmt.Println(err)
 		return webPageInfo, err
 	}
-	webPageInfo.IconUrl = s.Preview.Icon
+	webPageInfo.IconUrl = normalizePageIcoUrl(s.Preview.Icon, url)
 	webPageInfo.Title = s.Preview.Title
 	return webPageInfo, err
 }
-
+// When a string url is parsed without scheme (protocol), the parsed Host route is empty
+// and the url Path is equal to the input string, but this is wrong, if this is
+// the case, the Path, Host and Scheme are corrected with this method
+func normalizeUrl(url *url.URL, scheme string) {
+	if url.Scheme == "" {
+		url.Scheme = scheme
+	}
+	if url.Host == "" {
+		url.Host = strings.TrimRight(url.Path, "/")
+		url.Path = ""
+	}
+}
 func ExtractDomainInfo(route string, c *ssllabs.Client) (domainInfo DomainInfo , err error) {
 	domainInfo = DomainInfo{}
 	fmt.Println(route, "ruta ")
@@ -79,9 +103,7 @@ func ExtractDomainInfo(route string, c *ssllabs.Client) (domainInfo DomainInfo ,
 		err = ssll_err
 		return
 	}
-	if url.Scheme == "" {
-		url.Scheme = hostInfo.Protocol
-	}
+	normalizeUrl(url,  hostInfo.Protocol)
 	var info, webError = extractWebPageInfo(*url)
 	if webError == nil {
 		domainInfo.Title = info.Title

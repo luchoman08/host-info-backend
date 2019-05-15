@@ -6,7 +6,8 @@ CREATE TABLE domain_info  (
     previous_ssl_grade varchar(5),
     logo varchar(200),
     title varchar(50),
-    is_down boolean
+    is_down boolean,
+    logic_deleted boolean
 );
 
 CREATE TABLE server_info
@@ -18,5 +19,6 @@ CREATE TABLE server_info
     owner     varchar(50),
     created timestamp default now(),
     edited timestamp,
-    domain bigserial references domain_info(id)
+    domain bigserial references domain_info(id),
+    logic_deleted boolean
 );

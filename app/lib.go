@@ -2,9 +2,9 @@ package app
 
 import (
 	"fmt"
-	"github.com/luchoman08/goscraper"
 	"github.com/likexian/whois-go"
 	"github.com/likexian/whois-parser-go"
+	"github.com/luchoman08/goscraper"
 	"github.com/luchoman08/ssllabs"
 	"net/url"
 	"strings"
@@ -15,17 +15,18 @@ type whoIsOutput struct {
 	OrgName string
 }
 type WebPageInfo struct {
-	Title string
+	Title   string
 	IconUrl string
 }
-func parseWhoIsText(text string ) map[string]string {
+
+func parseWhoIsText(text string) map[string]string {
 	whoisText := strings.Replace(text, "\r", "", -1)
 	whoisText = whoisparser.TextReplacer.ReplaceAllString(whoisText, "\n$1: $2")
 	var keyValue = make(map[string]string)
 	whoisLines := strings.Split(text, "\n")
-	for i:=0; i< len(whoisLines); i++ {
-		if(strings.Contains(whoisLines[i], ":")) {
-			var split = strings.Split(whoisLines[i], ":");
+	for i := 0; i < len(whoisLines); i++ {
+		if strings.Contains(whoisLines[i], ":") {
+			var split = strings.Split(whoisLines[i], ":")
 			keyValue[split[0]] = strings.Trim(split[1], " ")
 		}
 	}
@@ -50,7 +51,6 @@ func extractServerInfo(endpoint ssllabs.Endpoint) ServerInfo {
 	return serverInfo
 }
 
-
 func normalizePageIcoUrl(route string, mainUrl url.URL) string {
 	var iconUrl, _ = url.Parse(route)
 	if iconUrl.Scheme == "" {
@@ -60,11 +60,10 @@ func normalizePageIcoUrl(route string, mainUrl url.URL) string {
 		iconUrl.Host = mainUrl.Host
 	}
 	fmt.Println(iconUrl.Scheme)
- 	return iconUrl.String()
+	return iconUrl.String()
 }
 
-
-func extractWebPageInfo(url url.URL)  (WebPageInfo, error) {
+func extractWebPageInfo(url url.URL) (WebPageInfo, error) {
 	var webPageInfo = WebPageInfo{}
 	s, err := goscraper.Scrape(url.String(), 5)
 
@@ -76,34 +75,41 @@ func extractWebPageInfo(url url.URL)  (WebPageInfo, error) {
 	webPageInfo.Title = s.Preview.Title
 	return webPageInfo, err
 }
-// When a string url is parsed without scheme (protocol), the parsed Host route is empty
-// and the url Path is equal to the input string, but this is wrong, if this is
-// the case, the Path, Host and Scheme are corrected with this method
-func normalizeUrl(url *url.URL, scheme string) {
-	if url.Scheme == "" {
-		url.Scheme = scheme
-	}
+
+func normalizeUrl(url *url.URL) {
 	if url.Host == "" {
-		url.Host = strings.TrimRight(url.Path, "/")
+		url.Host = strings.Trim(url.Path, "/")
 		url.Path = ""
 	}
 }
-func ExtractDomainInfo(route string, c *ssllabs.Client) (domainInfo DomainInfo , err error) {
+
+// When a string url is parsed without scheme (protocol), the parsed Host route is empty
+// and the url Path is equal to the input string, but this is wrong, if this is
+// the case, the Path, Host and Scheme are corrected with this method
+func normalizeUrlWithScheme(url *url.URL, scheme string) {
+	if url.Scheme == "" {
+		url.Scheme = scheme
+	}
+	normalizeUrl(url)
+
+}
+func ExtractDomainInfo(route string, c *ssllabs.Client) (domainInfo DomainInfo, err error) {
 	domainInfo = DomainInfo{}
-	fmt.Println(route, "ruta ")
 	var url, urlError = url.Parse(route)
+
+	normalizeUrl(url)
 	if urlError != nil {
 		fmt.Println("Url format error")
 		err = ErrUrlMalformed
 		return
 	}
 
-	hostInfo, ssll_err := c.GetDetailedReport(route)
+	hostInfo, ssll_err := c.GetDetailedReport(url.Host)
 	if ssll_err != nil {
 		err = ssll_err
 		return
 	}
-	normalizeUrl(url,  hostInfo.Protocol)
+	normalizeUrlWithScheme(url, hostInfo.Protocol)
 	var info, webError = extractWebPageInfo(*url)
 	if webError == nil {
 		domainInfo.Title = info.Title

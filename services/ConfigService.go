@@ -24,6 +24,6 @@ func (service *ConfigService) ReadConfig() (err error) {
 	}
 	return
 }
-func (service *ConfigService) GetConfig() models.Config {
-	return service.config
+func (service *ConfigService) GetConfig() *models.Config {
+	return &service.config
 }

@@ -5,6 +5,6 @@ import (
 )
 
 type ConfigService interface {
-	GetConfig() models.Config
+	GetConfig() *models.Config
 	ReadConfig() (err error)
 }

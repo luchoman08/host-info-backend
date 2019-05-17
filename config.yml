@@ -1,0 +1,2 @@
+db_path: 'postgresql://host_info:host_info@localhost:5432/host_info?sslmode=disable'
+db_dialect: postgres

@@ -11,7 +11,7 @@ import (
 
 var app = cli.NewApp()
 
-func commands(dbService interfaces.DatabaseService) {
+func commands(dbService interfaces.DatabaseService, domainRepo interfaces.IDomainRepository) {
 	app.Commands = []cli.Command{
 		{
 			Name:    "migrate",
@@ -41,6 +41,14 @@ func commands(dbService interfaces.DatabaseService) {
 				fmt.Println(net.LookupIP((c.Args()[0])))
 			},
 		},
+		{
+			Name:    "some",
+			Aliases: []string{"l-ip"},
+			Usage:   "Some usefull command",
+			Action: func(c *cli.Context) {
+				fmt.Println(domainRepo.ExistByHostName("www.univale.edu.co"))
+			},
+		},
 
 	}
 }
@@ -53,7 +61,7 @@ func info() {
 }
 func main() {
 	info()
-	commands(ServiceContainer().GetDatabaseService())
+	commands(ServiceContainer().GetDatabaseService(), ServiceContainer().GetDomainRepository())
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)

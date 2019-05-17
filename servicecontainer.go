@@ -20,13 +20,19 @@ type IServiceContainer interface {
 	GetDomainController() controllers.DomainController
 	GetDatabaseService() interfaces.DatabaseService
 	GetDomainRepository() interfaces.IDomainRepository
+	GetConfigService() interfaces.ConfigService
 }
 
 type kernel struct {
 	DomainController controllers.DomainController
 	DatabaseService interfaces.DatabaseService
+	ConfigService interfaces.ConfigService
 	DomainRepository interfaces.IDomainRepository
 }
+func (k *kernel) GetConfigService() interfaces.ConfigService {
+	return k.ConfigService
+}
+
 func (k *kernel) GetDatabaseService() interfaces.DatabaseService {
 	return k.DatabaseService
 }
@@ -64,7 +70,14 @@ func (k *kernel) injectDatabaseService(gH *infraestructures.GORMHandler, models 
 }
 func (k *kernel) Inject() {
 	var client, _ = ssllabs.NewClient()
-	db, err := gorm.Open("postgres", "postgresql://host_info:host_info@localhost:5432/host_info?sslmode=disable")
+	configService := &services.ConfigService{}
+	err := configService.ReadConfig()
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	k.ConfigService = configService
+	db, err := gorm.Open(configService.GetConfig().DbDialect, configService.GetConfig().DbPath)
 	if err != nil {
 		log.Fatal(err)
 	}

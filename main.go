@@ -1,9 +1,14 @@
 package main
 
 import (
+	"log"
 	"net/http"
 )
 
 func main() {
-	http.ListenAndServe(":3000", ChiRouter().InitRouter())
+	config := ServiceContainer().GetConfigService().GetConfig()
+	err := http.ListenAndServe(config.Host+":"+config.Port, ChiRouter().InitRouter())
+	if err != nil {
+		log.Fatal(err)
+	}
 }

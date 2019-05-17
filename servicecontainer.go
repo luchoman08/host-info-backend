@@ -70,7 +70,6 @@ func (k *kernel) injectDatabaseService(gH *infraestructures.GORMHandler, models 
 	k.DatabaseService = &services.DatabaseService{gH, models}
 }
 func (k *kernel) Inject() {
-	var client, _ = ssllabs.NewClient()
 	configService := &services.ConfigService{}
 	err := configService.ReadConfig()
 	if err != nil {
@@ -78,7 +77,9 @@ func (k *kernel) Inject() {
 		return
 	}
 	k.ConfigService = configService
-	db, err := gorm.Open(configService.GetConfig().DbDialect, configService.GetConfig().DbPath)
+	config := k.ConfigService.GetConfig()
+	var client, _ = ssllabs.NewClient(ssllabs.Config{Retries:config.SsllRetries, Timeout:config.SsllTimeout})
+	db, err := gorm.Open(config.DbDialect, config.DbPath)
 	if err != nil {
 		log.Fatal(err)
 	}

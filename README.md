@@ -6,6 +6,7 @@ Este repositorio fue altamente influenciado por el repositorio
 muestra una implementación usando inversión de control con injección de dependencias
 en busca de seguir los principios SOLID.
 
+## Ejecutando en local
 Como ejecutar: `go run main.go router.go servicecontainer.go`
 
 Como iniciar las tablas de la base de datos:  `go run cli.go servicecontainer.go migrate`

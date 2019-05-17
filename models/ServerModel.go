@@ -9,7 +9,7 @@ type ServerModel struct {
 	CreatedAt time.Time `json:"-"`
 	UpdatedAt time.Time `json:"-"`
 	DeletedAt *time.Time `sql:"index"  json:"-"`
-	Address  string `json:"address"`
+	Address  string `gorm:"unique; not null" json:"address"`
 	SslGrade string `json:"ssl_grade"`
 	Country  string `json:"country"`
 	Owner    string `json:"owner"`

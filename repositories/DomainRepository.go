@@ -28,7 +28,8 @@ func (repository *DomainRepository) ExistByHostName(hostName string) bool {
 }
 func (repository *DomainRepository) GetByHostName(hostName string) (domain models.DomainModel) {
 	domain = models.DomainModel{}
-	repository.GetDB().Where("host_name = ?", hostName).First(&domain)
+	repository.GetDB().Where(models.DomainModel{HostName:hostName}).First(&domain)
+	domain.Servers = repository.GetServersOfDomain(domain)
 	return
 }
 func (repository *DomainRepository) GetDomainFromExtern(u url.URL) (domain models.DomainModel, err error) {

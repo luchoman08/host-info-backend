@@ -10,6 +10,9 @@ import (
 type ServerService struct {
 	interfaces.ServerRepository
 }
+func (service *ServerService) GetServersOfDomain(domain models.DomainModel) []models.ServerModel {
+	return service.GetServersForDomain(domain)
+}
 
 func (service *ServerService) ServerCollectionsDistinct([]models.ServerModel, []models.ServerModel) bool {
 	return false

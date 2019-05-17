@@ -4,6 +4,7 @@ import (
 	"../interfaces"
 	"../models"
 	"fmt"
+	"github.com/golang/glog"
 	"github.com/luchoman08/ssllabs"
 )
 
@@ -24,7 +25,7 @@ func (service *ServerService) GetServer(domain models.DomainModel, endpoint ssll
 	if !exists {
 		server, err = service.GetServerFromExtern(endpoint)
 		if err != nil {
-			return
+			glog.Warning("Get server From extern has been failed on who is info get. Error: ", err)
 		}
 		server.DomainID = domain.ID
 		service.CreateServer(&server)

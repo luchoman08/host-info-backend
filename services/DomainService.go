@@ -3,7 +3,8 @@ package services
 import (
 	"../interfaces"
 	"../models"
-	"net/url"
+	"../app"
+		"net/url"
 )
 
 type DomainService struct {
@@ -12,11 +13,7 @@ type DomainService struct {
 
 func (service *DomainService) GetDomain(route string) (domain models.DomainModel, err error) {
 	u, err := url.Parse(route)
-	if service.ExistByHostName(u.Hostname()) {
-		domain = service.GetDomainFromLocal(*u)
-		return
-	} else {
-		domain, err = service.GetDomainFromExtern(*u)
-		return
-	}
+	app.NormalizeUrl(u)
+	domain, err = service.GetDomainFromExtern(*u)
+	return
 }

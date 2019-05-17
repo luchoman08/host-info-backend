@@ -19,17 +19,22 @@ type IServiceContainer interface {
 	GetModels() []interface{}
 	GetDomainController() controllers.DomainController
 	GetDatabaseService() interfaces.DatabaseService
+	GetDomainRepository() interfaces.IDomainRepository
 }
 
 type kernel struct {
 	DomainController controllers.DomainController
 	DatabaseService interfaces.DatabaseService
+	DomainRepository interfaces.IDomainRepository
 }
 func (k *kernel) GetDatabaseService() interfaces.DatabaseService {
 	return k.DatabaseService
 }
 func (k *kernel) GetDomainController() controllers.DomainController {
 	return k.DomainController
+}
+func (k *kernel) GetDomainRepository() interfaces.IDomainRepository{
+	return k.DomainRepository
 }
 
 func (k *kernel) GetModels() []interface{} {
@@ -50,7 +55,7 @@ func (k *kernel) injectDomainController(serverService interfaces.ServerService, 
 		serverService}
 	domainService := &services.DomainService{domainRepository}
 	domainController := controllers.DomainController{domainService}
-
+	k.DomainRepository = domainRepository
 	k.DomainController = domainController
 
 }

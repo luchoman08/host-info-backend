@@ -8,4 +8,3 @@ import (
 type IGoScraperHandler interface {
 	Scrape(url url.URL, maxRedirect int) (*goscraper.Document, error)
 }
-

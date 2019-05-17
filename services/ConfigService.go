@@ -6,12 +6,14 @@ import (
 	"io/ioutil"
 	"log"
 )
+
 const configFileName = "config.yml";
+
 type ConfigService struct {
 	config models.Config
 }
 
-func (service *ConfigService ) ReadConfig() (err error) {
+func (service *ConfigService) ReadConfig() (err error) {
 	yamlFile, err := ioutil.ReadFile(configFileName)
 	if err != nil {
 		log.Printf("yamlFile.Get err   #%v ", err)

@@ -28,7 +28,7 @@ func (repository *DomainRepository) ExistByHostName(hostName string) bool {
 }
 func (repository *DomainRepository) GetByHostName(hostName string) (domain models.DomainModel) {
 	domain = models.DomainModel{}
-	repository.GetDB().Where(models.DomainModel{HostName:hostName}).First(&domain)
+	repository.GetDB().Where(models.DomainModel{HostName: hostName}).First(&domain)
 	domain.Servers = repository.GetServersOfDomain(domain)
 	return
 }
@@ -53,7 +53,7 @@ func (repository *DomainRepository) GetDomainFromExtern(u url.URL) (domain model
 		domain.SslGrade = report.Endpoints[0].Grade
 	}
 	domain.IsDown = report.Status != repository.ReadyState()
-	if !repository.ExistByHostName(domain.HostName){
+	if !repository.ExistByHostName(domain.HostName) {
 		repository.CreateDomain(&domain)
 	}
 	var servers []models.ServerModel

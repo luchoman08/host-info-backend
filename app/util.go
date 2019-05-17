@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"strings"
 )
+
 // When a page have relative url in icon, for example, `/favicon.ico`
 // this is converted in a absolute url. If the route given is
 // absolute the same url is returned
@@ -17,6 +18,7 @@ func NormalizePageIcoUrl(route string, mainUrl url.URL) string {
 	}
 	return iconUrl.String()
 }
+
 // When a string url is parsed without scheme (protocol), the parsed Host route is empty
 // and the url Path is equal to the input string, but this is wrong, if this is
 // the case, the Host is corrected with this method

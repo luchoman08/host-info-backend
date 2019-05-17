@@ -9,9 +9,9 @@ import (
 type WhoIsHandler struct {
 }
 
-func ( handler *WhoIsHandler ) GetWhoIsRaw(ipAddress string) (text string, err error) {
-	 text, err = whois.Whois(ipAddress)
-	 return
+func (handler *WhoIsHandler) GetWhoIsRaw(ipAddress string) (text string, err error) {
+	text, err = whois.Whois(ipAddress)
+	return
 }
 
 func (handler *WhoIsHandler) ParseWhoIsText(text string) map[string]string {
@@ -27,7 +27,7 @@ func (handler *WhoIsHandler) ParseWhoIsText(text string) map[string]string {
 	}
 	return keyValue
 }
-func (handler *WhoIsHandler) GetWhoIsParsed(ipAddress string ) (out map[string]string, err error){
+func (handler *WhoIsHandler) GetWhoIsParsed(ipAddress string) (out map[string]string, err error) {
 	out = make(map[string]string)
 	text, err := handler.GetWhoIsRaw(ipAddress)
 	if err != nil {

@@ -9,7 +9,7 @@ type DatabaseService struct {
 	Interfaces []interface{}
 }
 
-func (service *DatabaseService) Migrate()  {
+func (service *DatabaseService) Migrate() {
 	for _, element := range service.Interfaces {
 		service.GetDB().AutoMigrate(element)
 	}

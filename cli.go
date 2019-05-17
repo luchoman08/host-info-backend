@@ -1,12 +1,12 @@
 package main
 
 import (
+	"./interfaces"
 	"fmt"
 	"github.com/urfave/cli"
-	"./interfaces"
 	"log"
-	"os"
 	"net"
+	"os"
 )
 
 var app = cli.NewApp()
@@ -49,7 +49,6 @@ func commands(dbService interfaces.DatabaseService, domainRepo interfaces.IDomai
 				fmt.Println(domainRepo.ExistByHostName("www.univale.edu.co"))
 			},
 		},
-
 	}
 }
 

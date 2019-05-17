@@ -1,17 +1,17 @@
 package main
 
 import (
-	"github.com/jinzhu/gorm"
-	"github.com/luchoman08/ssllabs"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"log"
-	"sync"
 	"./controllers"
 	"./infraestructures"
+	"./interfaces"
+	"./models"
 	"./repositories"
 	"./services"
-	"./models"
-	"./interfaces"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/luchoman08/ssllabs"
+	"log"
+	"sync"
 )
 
 type IServiceContainer interface {
@@ -25,10 +25,11 @@ type IServiceContainer interface {
 
 type kernel struct {
 	DomainController controllers.DomainController
-	DatabaseService interfaces.DatabaseService
-	ConfigService interfaces.ConfigService
+	DatabaseService  interfaces.DatabaseService
+	ConfigService    interfaces.ConfigService
 	DomainRepository interfaces.IDomainRepository
 }
+
 func (k *kernel) GetConfigService() interfaces.ConfigService {
 	return k.ConfigService
 }
@@ -39,7 +40,7 @@ func (k *kernel) GetDatabaseService() interfaces.DatabaseService {
 func (k *kernel) GetDomainController() controllers.DomainController {
 	return k.DomainController
 }
-func (k *kernel) GetDomainRepository() interfaces.IDomainRepository{
+func (k *kernel) GetDomainRepository() interfaces.IDomainRepository {
 	return k.DomainRepository
 }
 
@@ -83,11 +84,12 @@ func (k *kernel) Inject() {
 	}
 	gormHandler := infraestructures.GORMHandler{db}
 	var whoIsHandler = infraestructures.WhoIsHandler{}
-	serverRepo := repositories.ServerRepository{&gormHandler,&whoIsHandler }
+	serverRepo := repositories.ServerRepository{&gormHandler, &whoIsHandler}
 	serverService := services.ServerService{&serverRepo}
 	k.injectDomainController(&serverService, *client, db, &gormHandler)
 	k.injectDatabaseService(&gormHandler, k.GetModels())
 }
+
 var (
 	k             *kernel
 	containerOnce sync.Once

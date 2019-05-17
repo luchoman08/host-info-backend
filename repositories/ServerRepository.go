@@ -11,6 +11,7 @@ type ServerRepository struct {
 	interfaces.IGORMHandler
 	interfaces.WhoIsHandler
 }
+
 func (repository *ServerRepository) CreateServer(model *models.ServerModel) {
 	fmt.Println(model.Address)
 	repository.GetDB().Create(model)
@@ -19,7 +20,7 @@ func (repository *ServerRepository) GetServersForDomain(model models.DomainModel
 	repository.GetDB().Where("domain_id = ?", model.ID).Find(&servers)
 	return
 }
-func (repository *ServerRepository) GetServerFromExtern(endpoint ssllabs.Endpoint) (models.ServerModel , error) {
+func (repository *ServerRepository) GetServerFromExtern(endpoint ssllabs.Endpoint) (models.ServerModel, error) {
 	server := models.ServerModel{}
 	server.SslGrade = endpoint.Grade
 	server.Address = endpoint.ServerName

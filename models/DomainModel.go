@@ -4,14 +4,12 @@ import (
 	"time"
 )
 
-
-
 type DomainModel struct {
-	ID uint `json:"-"`
-	CreatedAt time.Time  `json:"-"`
-	UpdatedAt time.Time  `json:"-"`
-	HostName string `gorm:"unique;not null" json:"-"`
-	DeletedAt *time.Time `sql:"index"  json:"-"`
+	ID               uint          `json:"-"`
+	CreatedAt        time.Time     `json:"-"`
+	UpdatedAt        time.Time     `json:"-"`
+	HostName         string        `gorm:"unique;not null" json:"-"`
+	DeletedAt        *time.Time    `sql:"index"  json:"-"`
 	Servers          []ServerModel `json:"servers"`
 	ServersChanged   bool          `json:"servers_changed"`
 	SslGrade         string        `json:"ssl_grade"`

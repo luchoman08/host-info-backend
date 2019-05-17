@@ -4,7 +4,9 @@ import (
 	"net/url"
 	"strings"
 )
-
+// When a page have relative url in icon, for example, `/favicon.ico`
+// this is converted in a absolute url. If the route given is
+// absolute the same url is returned
 func NormalizePageIcoUrl(route string, mainUrl url.URL) string {
 	var iconUrl, _ = url.Parse(route)
 	if iconUrl.Scheme == "" {

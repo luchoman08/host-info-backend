@@ -58,10 +58,7 @@ func (repository *DomainRepository) GetDomainFromExtern(u url.URL) (domain model
 	}
 	var servers []models.ServerModel
 	for i := 0; i < len(report.Endpoints); i++ {
-		server, err := repository.GetServer(domain, report.Endpoints[i])
-		if err != nil {
-			break
-		}
+		server, _ := repository.GetServer(domain, report.Endpoints[i])
 		servers = append(servers, server)
 	}
 	domain.Servers = servers

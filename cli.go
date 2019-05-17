@@ -42,11 +42,11 @@ func commands(dbService interfaces.DatabaseService, domainRepo interfaces.IDomai
 			},
 		},
 		{
-			Name:    "some",
-			Aliases: []string{"l-ip"},
+			Name:    "check-if-local-domain",
+			Aliases: []string{"ch-ld"},
 			Usage:   "Some usefull command",
 			Action: func(c *cli.Context) {
-				fmt.Println(domainRepo.ExistByHostName("www.univale.edu.co"))
+				fmt.Println(domainRepo.ExistByHostName(c.Args()[0]))
 			},
 		},
 	}

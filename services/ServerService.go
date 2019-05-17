@@ -20,7 +20,7 @@ func (service *ServerService) ServerCollectionsDistinct([]models.ServerModel, []
 	return false
 }
 func (service *ServerService) GetServer(domain models.DomainModel, endpoint ssllabs.Endpoint) (server models.ServerModel, err error) {
-	exists := service.ExistsByAddress(endpoint.ServerName)
+	exists := service.ExistsByIpAddress(endpoint.IPAddress)
 	fmt.Println(exists)
 	if !exists {
 		server, err = service.GetServerFromExtern(endpoint)
@@ -31,7 +31,7 @@ func (service *ServerService) GetServer(domain models.DomainModel, endpoint ssll
 		service.CreateServer(&server)
 		return
 	} else {
-		server = service.GetServerFromLocal(endpoint.ServerName)
+		server = service.GetServerFromLocal(endpoint.IPAddress)
 		return
 	}
 }

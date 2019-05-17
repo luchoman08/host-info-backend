@@ -3,7 +3,6 @@ package repositories
 import (
 	"../interfaces"
 	"../models"
-	"fmt"
 	"github.com/luchoman08/ssllabs"
 )
 
@@ -13,7 +12,6 @@ type ServerRepository struct {
 }
 
 func (repository *ServerRepository) CreateServer(model *models.ServerModel) {
-	fmt.Println(model.Address)
 	repository.GetDB().Create(model)
 }
 func (repository *ServerRepository) GetServersForDomain(domain models.DomainModel) (servers []models.ServerModel) {
@@ -23,7 +21,8 @@ func (repository *ServerRepository) GetServersForDomain(domain models.DomainMode
 func (repository *ServerRepository) GetServerFromExtern(endpoint ssllabs.Endpoint) (server models.ServerModel, err error) {
 	server = models.ServerModel{}
 	server.SslGrade = endpoint.Grade
-	server.Address = endpoint.ServerName
+	if endpoint.ServerName != "" { server.ServerName = endpoint.ServerName  } else {server.ServerName = endpoint.IPAddress }
+	server.IpAddress = endpoint.IPAddress
 	var whoIs, nonFatalErr = repository.GetWhoIsParsed(endpoint.IPAddress)
 	err = nonFatalErr
 	if err != nil {
@@ -34,11 +33,11 @@ func (repository *ServerRepository) GetServerFromExtern(endpoint ssllabs.Endpoin
 	}
 	return server, err
 }
-func (repository *ServerRepository) GetServerFromLocal(address string) (server models.ServerModel) {
-	repository.GetDB().Where("address = ?", address).First(&server)
+func (repository *ServerRepository) GetServerFromLocal(ipAddress string) (server models.ServerModel) {
+	repository.GetDB().Where(models.ServerModel{IpAddress:ipAddress}, ipAddress).First(&server)
 	return
 }
-func (repository *ServerRepository) ExistsByAddress(address string) bool {
+func (repository *ServerRepository) ExistsByIpAddress(ipAddress string) bool {
 	server := &models.ServerModel{}
-	return !repository.GetDB().Where(models.ServerModel{Address: address}).First(&server).RecordNotFound()
+	return !repository.GetDB().Where(models.ServerModel{IpAddress: ipAddress}).First(&server).RecordNotFound()
 }

@@ -10,5 +10,5 @@ type ServerRepository interface {
 	GetServersForDomain(model models.DomainModel) (servers []models.ServerModel)
 	GetServerFromExtern(endpoint ssllabs.Endpoint) (models.ServerModel, error)
 	GetServerFromLocal(address string) (server models.ServerModel)
-	ExistsByAddress(string) bool
+	ExistsByIpAddress(string) bool
 }

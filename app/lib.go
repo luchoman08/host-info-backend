@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"net/url"
 	"strings"
 )
@@ -14,7 +13,6 @@ func NormalizePageIcoUrl(route string, mainUrl url.URL) string {
 	if iconUrl.Host == "" {
 		iconUrl.Host = mainUrl.Host
 	}
-	fmt.Println(iconUrl.Scheme)
 	return iconUrl.String()
 }
 // When a string url is parsed without scheme (protocol), the parsed Host route is empty

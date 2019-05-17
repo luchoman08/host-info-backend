@@ -21,17 +21,14 @@ func (service *ServerService) ServerCollectionsDistinct([]models.ServerModel, []
 }
 func (service *ServerService) GetServer(domain models.DomainModel, endpoint ssllabs.Endpoint) (server models.ServerModel, err error) {
 	exists := service.ExistsByIpAddress(endpoint.IPAddress)
+	server, err = service.GetServerFromExtern(endpoint)
 	fmt.Println(exists)
 	if !exists {
-		server, err = service.GetServerFromExtern(endpoint)
 		if err != nil {
 			glog.Warning("Get server From extern has been failed on who is info get. Error: ", err)
 		}
 		server.DomainID = domain.ID
 		service.CreateServer(&server)
-		return
-	} else {
-		server = service.GetServerFromLocal(endpoint.IPAddress)
-		return
 	}
+	return
 }

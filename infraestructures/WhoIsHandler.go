@@ -22,7 +22,7 @@ func (handler *WhoIsHandler) ParseWhoIsText(text string) map[string]string {
 	for i := 0; i < len(whoisLines); i++ {
 		if strings.Contains(whoisLines[i], ":") {
 			var split = strings.Split(whoisLines[i], ":")
-			keyValue[split[0]] = strings.Trim(split[1], " ")
+			keyValue[strings.ToLower(split[0])] = strings.Trim(split[1], " ")
 		}
 	}
 	return keyValue

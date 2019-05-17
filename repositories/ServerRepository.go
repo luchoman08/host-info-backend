@@ -32,8 +32,15 @@ func (repository *ServerRepository) GetServerFromExtern(endpoint ssllabs.Endpoin
 	if err != nil {
 		err = err
 	} else {
-		server.Country = whoIs["Country"]
-		server.Owner = whoIs["OrgName"]
+		server.Country = whoIs["country"]
+		// In some cases, orgname is empty, if is the case
+		// check for descr value than tipically have the name
+		// of the organization
+		if whoIs["orgname"] != "" {
+			server.Owner = whoIs["orgname"]
+		} else if whoIs["descr"] != "" {
+			server.Owner = whoIs["descr"]
+		}
 	}
 	return server, err
 }

@@ -36,8 +36,6 @@ func (repository *ServerRepository) GetServerFromLocal(address string) (server m
 	return
 }
 func (repository *ServerRepository) ExistsByAddress(address string) bool {
-	const undefined = "undefined"
 	server := &models.ServerModel{}
-	repository.GetDB().Where("address = ?", address).FirstOrInit(&server, &models.ServerModel{Address: undefined})
-	return server.Address != undefined
+	return repository.GetDB().Where(models.ServerModel{Address: address}).First(&server).RecordNotFound()
 }

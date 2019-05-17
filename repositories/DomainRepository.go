@@ -23,10 +23,8 @@ func (repository *DomainRepository) GetDomainFromLocal(u url.URL) models.DomainM
 	return repository.GetByHostName(u.Hostname())
 }
 func (repository *DomainRepository) ExistByHostName(hostName string) bool {
-	const undefined = "undefined"
 	domain := models.DomainModel{}
-	repository.GetDB().Where("host_name = ?", hostName).FirstOrInit(&domain, models.DomainModel{HostName: undefined})
-	return domain.HostName != undefined
+	return !repository.GetDB().Where(models.DomainModel{HostName: hostName}).First(&domain).RecordNotFound()
 }
 func (repository *DomainRepository) GetByHostName(hostName string) (domain models.DomainModel) {
 	domain = models.DomainModel{}

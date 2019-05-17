@@ -5,6 +5,7 @@ import (
 	"../interfaces"
 	"../models"
 	"net/url"
+	"time"
 )
 
 type DomainRepository struct {
@@ -15,6 +16,7 @@ type DomainRepository struct {
 }
 
 func (repository *DomainRepository) CreateDomain(domain *models.DomainModel) {
+	domain.SearchedAt = time.Now()
 	repository.GetDB().Create(domain)
 }
 
@@ -29,7 +31,22 @@ func (repository *DomainRepository) ExistByHostName(hostName string) bool {
 func (repository *DomainRepository) GetByHostName(hostName string) (domain models.DomainModel) {
 	domain = models.DomainModel{}
 	repository.GetDB().Where(models.DomainModel{HostName: hostName}).First(&domain)
+	domain.Servers = repository.GetServersOfDomain(&domain)
+	return
+}
+func(repository *DomainRepository) populateServers(domain *models.DomainModel) {
 	domain.Servers = repository.GetServersOfDomain(domain)
+
+}
+func(repository *DomainRepository) UpdateSearchedTime(domain *models.DomainModel) {
+	domain.SearchedAt = time.Now()
+	repository.GetDB().Save(domain)
+}
+func (repository *DomainRepository) GetLastSearched(limit int) (domains []models.DomainModel) {
+	repository.GetDB().Limit(limit).Order("searched_at desc").Find(&domains)
+	for index, _ := range domains {
+		repository.populateServers(&domains[index])
+	}
 	return
 }
 func (repository *DomainRepository) GetDomainFromExtern(u url.URL) (domain models.DomainModel, err error) {
@@ -55,6 +72,9 @@ func (repository *DomainRepository) GetDomainFromExtern(u url.URL) (domain model
 	domain.IsDown = report.Status != repository.ReadyState()
 	if !repository.ExistByHostName(domain.HostName) {
 		repository.CreateDomain(&domain)
+	} else {
+		dbDomain := repository.GetDomainFromLocal(u)
+		repository.UpdateSearchedTime(&dbDomain)
 	}
 	var servers []models.ServerModel
 	for i := 0; i < len(report.Endpoints); i++ {

@@ -26,7 +26,8 @@ func (router *router) InitRouter() *chi.Mux {
 
 	r := chi.NewRouter()
 	r.Use(cors.Handler)
-	r.HandleFunc("/api/v1/analyze", domainController.GetServer)
+	r.HandleFunc("/api/v1/analyze", domainController.ControllerGetServer)
+	r.HandleFunc("/api/v1/lastSearched", domainController.ControllerGetLastSearched)
 
 	return r
 }

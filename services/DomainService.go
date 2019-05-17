@@ -17,3 +17,8 @@ func (service *DomainService) GetDomain(route string) (domain models.DomainModel
 	domain, err = service.GetDomainFromExtern(*u)
 	return
 }
+
+func (service *DomainService) ServiceGetLastSearched(limit int) (domains []models.DomainModel) {
+	domains = service.GetLastSearched(limit)
+	return
+}

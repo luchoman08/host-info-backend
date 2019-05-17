@@ -14,7 +14,7 @@ type ServerRepository struct {
 func (repository *ServerRepository) CreateServer(model *models.ServerModel) {
 	repository.GetDB().Create(model)
 }
-func (repository *ServerRepository) GetServersForDomain(domain models.DomainModel) (servers []models.ServerModel) {
+func (repository *ServerRepository) GetServersForDomain(domain *models.DomainModel) (servers []models.ServerModel) {
 	repository.GetDB().Where(models.ServerModel{DomainID: domain.ID}).Find(&servers)
 	return
 }

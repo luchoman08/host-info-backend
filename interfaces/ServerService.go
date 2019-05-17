@@ -8,5 +8,5 @@ import (
 type ServerService interface {
 	ServerCollectionsDistinct([]models.ServerModel, []models.ServerModel) bool
 	GetServer(models.DomainModel, ssllabs.Endpoint) (server models.ServerModel, err error)
-	GetServersOfDomain(model models.DomainModel) []models.ServerModel
+	GetServersOfDomain(model *models.DomainModel) []models.ServerModel
 }

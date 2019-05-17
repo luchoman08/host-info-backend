@@ -11,4 +11,6 @@ type IDomainRepository interface {
 	ExistByHostName(string) bool
 	CreateDomain(*models.DomainModel)
 	GetByHostName(string) models.DomainModel
+	UpdateSearchedTime(domain *models.DomainModel)
+	GetLastSearched(limit int) []models.DomainModel
 }

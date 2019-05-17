@@ -6,13 +6,30 @@ import (
 	"github.com/go-chi/render"
 	"github.com/luchoman08/ssllabs"
 	"net/http"
+	"strconv"
 )
 
 type DomainController struct {
 	interfaces.IDomainService
 }
 
-func (controller DomainController) GetServer(w http.ResponseWriter, r *http.Request) {
+func (controller DomainController) ControllerGetLastSearched(w http.ResponseWriter, r *http.Request) {
+	limitStr := r.URL.Query().Get("limit")
+	limit := 3
+	if limitStr != "" {
+		limitInt, err := strconv.Atoi(limitStr)
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusUnprocessableEntity), http.StatusUnprocessableEntity)
+			return
+		} else {
+			limit = limitInt
+		}
+	}
+ 	domains := controller.ServiceGetLastSearched(limit)
+	render.JSON(w, r, domains)
+}
+
+func (controller DomainController) ControllerGetServer(w http.ResponseWriter, r *http.Request) {
 	route := r.URL.Query().Get("host")
 
 	if route == "" {

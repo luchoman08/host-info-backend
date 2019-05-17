@@ -1,10 +1,10 @@
 package services
 
 import (
+	"../app"
 	"../interfaces"
 	"../models"
-	"../app"
-		"net/url"
+	"net/url"
 )
 
 type DomainService struct {

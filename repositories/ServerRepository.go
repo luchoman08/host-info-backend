@@ -15,13 +15,17 @@ func (repository *ServerRepository) CreateServer(model *models.ServerModel) {
 	repository.GetDB().Create(model)
 }
 func (repository *ServerRepository) GetServersForDomain(domain models.DomainModel) (servers []models.ServerModel) {
-	repository.GetDB().Where(models.ServerModel{DomainID:domain.ID}).Find(&servers)
+	repository.GetDB().Where(models.ServerModel{DomainID: domain.ID}).Find(&servers)
 	return
 }
 func (repository *ServerRepository) GetServerFromExtern(endpoint ssllabs.Endpoint) (server models.ServerModel, err error) {
 	server = models.ServerModel{}
 	server.SslGrade = endpoint.Grade
-	if endpoint.ServerName != "" { server.ServerName = endpoint.ServerName  } else {server.ServerName = endpoint.IPAddress }
+	if endpoint.ServerName != "" {
+		server.ServerName = endpoint.ServerName
+	} else {
+		server.ServerName = endpoint.IPAddress
+	}
 	server.IpAddress = endpoint.IPAddress
 	var whoIs, nonFatalErr = repository.GetWhoIsParsed(endpoint.IPAddress)
 	err = nonFatalErr
@@ -34,7 +38,7 @@ func (repository *ServerRepository) GetServerFromExtern(endpoint ssllabs.Endpoin
 	return server, err
 }
 func (repository *ServerRepository) GetServerFromLocal(ipAddress string) (server models.ServerModel) {
-	repository.GetDB().Where(models.ServerModel{IpAddress:ipAddress}, ipAddress).First(&server)
+	repository.GetDB().Where(models.ServerModel{IpAddress: ipAddress}, ipAddress).First(&server)
 	return
 }
 func (repository *ServerRepository) ExistsByIpAddress(ipAddress string) bool {

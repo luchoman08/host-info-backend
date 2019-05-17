@@ -78,7 +78,7 @@ func (k *kernel) Inject() {
 	}
 	k.ConfigService = configService
 	config := k.ConfigService.GetConfig()
-	var client, _ = ssllabs.NewClient(ssllabs.Config{Retries:config.SsllRetries, Timeout:config.SsllTimeout})
+	var client, _ = ssllabs.NewClient(ssllabs.Config{Retries: config.SsllRetries, Timeout: config.SsllTimeout})
 	db, err := gorm.Open(config.DbDialect, config.DbPath)
 	if err != nil {
 		log.Fatal(err)

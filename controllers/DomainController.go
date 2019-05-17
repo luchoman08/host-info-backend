@@ -4,6 +4,7 @@ import (
 	"../app"
 	"../interfaces"
 	"github.com/go-chi/render"
+	"github.com/luchoman08/ssllabs"
 	"net/http"
 )
 
@@ -19,11 +20,23 @@ func (controller DomainController) GetServer(w http.ResponseWriter, r *http.Requ
 		render.JSON(w, r, app.ErrHostCannotBeEmpty.Error())
 		return
 	}
-	var domain, err = controller.GetDomain(route)
+	domain, err := controller.GetDomain(route)
+
 	if err != nil {
-		http.Error(w, http.StatusText(400), 400)
-		render.JSON(w, r, err.Error())
+		switch err.(type) {
+		case ssllabs.RetriesExeed:
+			{
+				http.Error(w, http.StatusText(http.StatusPartialContent), http.StatusPartialContent)
+				render.JSON(w, r, err.Error())
+			}
+		default:
+			{
+				http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+				render.JSON(w, r, err.Error())
+			}
+		}
 		return
+	} else {
+		render.JSON(w, r, domain)
 	}
-	render.JSON(w, r, domain)
 }

@@ -2,6 +2,6 @@ package interfaces
 
 import "github.com/jinzhu/gorm"
 
-type IGORMHandler interface {
+type GORMHandler interface {
 	GetDB() *gorm.DB
 }

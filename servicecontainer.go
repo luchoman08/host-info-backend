@@ -14,6 +14,8 @@ import (
 	"sync"
 )
 
+// IServiceContainer provide all methods than are needed to be public
+// across the app
 type IServiceContainer interface {
 	Inject()
 	GetModels() []interface{}
@@ -56,18 +58,18 @@ func (k *kernel) injectDomainController(serverService interfaces.ServerService, 
 	sslLabsHandler.Client = client
 	scraper := infraestructures.GoScraperHandler{}
 	domainRepository := &repositories.DomainRepository{
-		&sslLabsHandler,
-		&scraper,
-		gH,
-		serverService}
-	domainService := &services.DomainService{domainRepository}
-	domainController := controllers.DomainController{domainService}
+		SSLabsHandler:    &sslLabsHandler,
+		GoScraperHandler: &scraper,
+		GORMHandler:      gH,
+		ServerService:    serverService}
+	domainService := &services.DomainService{DomainRepository: domainRepository}
+	domainController := controllers.DomainController{DomainService: domainService}
 	k.DomainRepository = domainRepository
 	k.DomainController = domainController
 
 }
-func (k *kernel) injectDatabaseService(gH *infraestructures.GORMHandler, models []interface{}) {
-	k.DatabaseService = &services.DatabaseService{gH, models}
+func (k *kernel) injectDatabaseService(gH *infraestructures.GORMHandler, interfaces []interface{}) {
+	k.DatabaseService = &services.DatabaseService{GORMHandler: gH, Interfaces: interfaces}
 }
 func (k *kernel) Inject() {
 	configService := &services.ConfigService{}
@@ -83,10 +85,10 @@ func (k *kernel) Inject() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	gormHandler := infraestructures.GORMHandler{db}
+	gormHandler := infraestructures.GORMHandler{Db: db}
 	var whoIsHandler = infraestructures.WhoIsHandler{}
-	serverRepo := repositories.ServerRepository{&gormHandler, &whoIsHandler}
-	serverService := services.ServerService{&serverRepo}
+	serverRepo := repositories.ServerRepository{GORMHandler: &gormHandler, WhoIsHandler: &whoIsHandler}
+	serverService := services.ServerService{ServerRepository: &serverRepo}
 	k.injectDomainController(&serverService, *client, db, &gormHandler)
 	k.injectDatabaseService(&gormHandler, k.GetModels())
 }
@@ -96,6 +98,7 @@ var (
 	containerOnce sync.Once
 )
 
+// ServiceContainer provide all app kernel functions and init only one time
 func ServiceContainer() IServiceContainer {
 	if k == nil {
 		containerOnce.Do(func() {

@@ -6,6 +6,7 @@ import (
 	"sync"
 )
 
+// IChiRouter provide a method for access the chi router
 type IChiRouter interface {
 	InitRouter() *chi.Mux
 }
@@ -37,6 +38,8 @@ var (
 	routerOnce sync.Once
 )
 
+// ChiRouter Implements `IChiRouter` and provide a function for init
+// only one time the internal router
 func ChiRouter() IChiRouter {
 	if m == nil {
 		routerOnce.Do(func() {

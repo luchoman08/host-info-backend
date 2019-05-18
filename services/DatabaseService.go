@@ -5,7 +5,7 @@ import (
 )
 
 type DatabaseService struct {
-	interfaces.IGORMHandler
+	interfaces.GORMHandler
 	Interfaces []interface{}
 }
 

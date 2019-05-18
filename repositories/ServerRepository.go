@@ -7,7 +7,7 @@ import (
 )
 
 type ServerRepository struct {
-	interfaces.IGORMHandler
+	interfaces.GORMHandler
 	interfaces.WhoIsHandler
 }
 

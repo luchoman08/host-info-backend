@@ -11,7 +11,7 @@ import (
 type DomainRepository struct {
 	interfaces.SSLabsHandler
 	interfaces.GoScraperHandler
-	interfaces.IGORMHandler
+	interfaces.GORMHandler
 	interfaces.ServerService
 }
 

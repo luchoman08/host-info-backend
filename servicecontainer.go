@@ -19,7 +19,7 @@ type IServiceContainer interface {
 	GetModels() []interface{}
 	GetDomainController() controllers.DomainController
 	GetDatabaseService() interfaces.DatabaseService
-	GetDomainRepository() interfaces.IDomainRepository
+	GetDomainRepository() interfaces.DomainRepository
 	GetConfigService() interfaces.ConfigService
 }
 
@@ -27,7 +27,7 @@ type kernel struct {
 	DomainController controllers.DomainController
 	DatabaseService  interfaces.DatabaseService
 	ConfigService    interfaces.ConfigService
-	DomainRepository interfaces.IDomainRepository
+	DomainRepository interfaces.DomainRepository
 }
 
 func (k *kernel) GetConfigService() interfaces.ConfigService {
@@ -40,7 +40,7 @@ func (k *kernel) GetDatabaseService() interfaces.DatabaseService {
 func (k *kernel) GetDomainController() controllers.DomainController {
 	return k.DomainController
 }
-func (k *kernel) GetDomainRepository() interfaces.IDomainRepository {
+func (k *kernel) GetDomainRepository() interfaces.DomainRepository {
 	return k.DomainRepository
 }
 

@@ -11,7 +11,7 @@ import (
 
 var app = cli.NewApp()
 
-func commands(dbService interfaces.DatabaseService, domainRepo interfaces.IDomainRepository) {
+func commands(dbService interfaces.DatabaseService, domainRepo interfaces.DomainRepository) {
 	app.Commands = []cli.Command{
 		{
 			Name:    "migrate",

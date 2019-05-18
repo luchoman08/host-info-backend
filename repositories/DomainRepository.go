@@ -9,8 +9,8 @@ import (
 )
 
 type DomainRepository struct {
-	interfaces.ISSLabsHandler
-	interfaces.IGoScraperHandler
+	interfaces.SSLabsHandler
+	interfaces.GoScraperHandler
 	interfaces.IGORMHandler
 	interfaces.ServerService
 }
@@ -34,11 +34,11 @@ func (repository *DomainRepository) GetByHostName(hostName string) (domain model
 	domain.Servers = repository.GetServersOfDomain(&domain)
 	return
 }
-func(repository *DomainRepository) populateServers(domain *models.DomainModel) {
+func (repository *DomainRepository) populateServers(domain *models.DomainModel) {
 	domain.Servers = repository.GetServersOfDomain(domain)
 
 }
-func(repository *DomainRepository) UpdateSearchedTime(domain *models.DomainModel) {
+func (repository *DomainRepository) UpdateSearchedTime(domain *models.DomainModel) {
 	domain.SearchedAt = time.Now()
 	repository.GetDB().Save(domain)
 }

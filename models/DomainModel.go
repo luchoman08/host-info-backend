@@ -8,7 +8,7 @@ type DomainModel struct {
 	ID               uint          `json:"-"`
 	CreatedAt        time.Time     `json:"-"`
 	UpdatedAt        time.Time     `json:"-" sql:"DEFAULT:current_timestamp"`
-	SearchedAt 		 time.Time     `json:"-"`
+	SearchedAt       time.Time     `json:"-"`
 	HostName         string        `gorm:"unique;not null" json:"-"`
 	DeletedAt        *time.Time    `sql:"index"  json:"-"`
 	Servers          []ServerModel `json:"servers"`

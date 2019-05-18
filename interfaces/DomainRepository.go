@@ -5,7 +5,7 @@ import (
 	"net/url"
 )
 
-type IDomainRepository interface {
+type DomainRepository interface {
 	GetDomainFromLocal(url url.URL) models.DomainModel
 	GetDomainFromExtern(url url.URL) (models.DomainModel, error)
 	ExistByHostName(string) bool

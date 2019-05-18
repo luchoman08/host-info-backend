@@ -10,7 +10,7 @@ import (
 )
 
 type DomainController struct {
-	interfaces.IDomainService
+	interfaces.DomainService
 }
 
 func (controller DomainController) ControllerGetLastSearched(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +25,7 @@ func (controller DomainController) ControllerGetLastSearched(w http.ResponseWrit
 			limit = limitInt
 		}
 	}
- 	domains := controller.ServiceGetLastSearched(limit)
+	domains := controller.ServiceGetLastSearched(limit)
 	render.JSON(w, r, domains)
 }
 

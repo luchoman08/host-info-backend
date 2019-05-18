@@ -5,6 +5,6 @@ import (
 	"net/url"
 )
 
-type IGoScraperHandler interface {
+type GoScraperHandler interface {
 	Scrape(url url.URL, maxRedirect int) (*goscraper.Document, error)
 }

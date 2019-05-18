@@ -8,7 +8,7 @@ import (
 )
 
 type DomainService struct {
-	interfaces.IDomainRepository
+	interfaces.DomainRepository
 }
 
 func (service *DomainService) GetDomain(route string) (domain models.DomainModel, err error) {

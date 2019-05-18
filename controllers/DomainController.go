@@ -1,18 +1,17 @@
 package controllers
 
 import (
-	"../app"
 	"../interfaces"
 	"github.com/go-chi/render"
 	"github.com/luchoman08/ssllabs"
 	"net/http"
 	"strconv"
 )
-
+// DomainController implements all methods for provide domain info to web server interfaces
 type DomainController struct {
 	interfaces.DomainService
 }
-
+// ControllerGetLastSearched return a web response with the last searched domains
 func (controller DomainController) ControllerGetLastSearched(w http.ResponseWriter, r *http.Request) {
 	limitStr := r.URL.Query().Get("limit")
 	limit := 3
@@ -21,20 +20,18 @@ func (controller DomainController) ControllerGetLastSearched(w http.ResponseWrit
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusUnprocessableEntity), http.StatusUnprocessableEntity)
 			return
-		} else {
-			limit = limitInt
 		}
+		limit = limitInt
 	}
 	domains := controller.ServiceGetLastSearched(limit)
 	render.JSON(w, r, domains)
 }
-
+// ControllerGetServer return a web response with a domain info if is available
 func (controller DomainController) ControllerGetServer(w http.ResponseWriter, r *http.Request) {
 	route := r.URL.Query().Get("host")
 
 	if route == "" {
-		http.Error(w, http.StatusText(400), 400)
-		render.JSON(w, r, app.ErrHostCannotBeEmpty.Error())
+		http.Error(w, "host cannot be empty", 400)
 		return
 	}
 	domain, err := controller.GetDomain(route)
@@ -53,7 +50,6 @@ func (controller DomainController) ControllerGetServer(w http.ResponseWriter, r 
 			}
 		}
 		return
-	} else {
-		render.JSON(w, r, domain)
 	}
+	render.JSON(w, r, domain)
 }

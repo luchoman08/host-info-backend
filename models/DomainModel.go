@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 )
-
+// DomainModel represents a web domain
 type DomainModel struct {
 	ID               uint          `json:"-"`
 	CreatedAt        time.Time     `json:"-"`

@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"time"
 )
-
+// DomainRepository implements all the needed methods for access domain data
 type DomainRepository struct {
 	interfaces.SSLabsHandler
 	interfaces.GoScraperHandler
@@ -15,56 +15,70 @@ type DomainRepository struct {
 	interfaces.ServerService
 }
 
+// CreateDomain save in local storage a domain
 func (repository *DomainRepository) CreateDomain(domain *models.DomainModel) {
 	domain.SearchedAt = time.Now()
 	repository.GetDB().Create(domain)
 }
-
+// GetDomainFromLocal receive a url and returns the matching domain stored locally if exists
 func (repository *DomainRepository) GetDomainFromLocal(u url.URL) models.DomainModel {
-	app.NormalizeUrl(&u)
+	app.NormalizeURL(&u)
 	return repository.GetByHostName(u.Hostname())
 }
+// ExistByHostName check if a domain exists locally based in its HostName
 func (repository *DomainRepository) ExistByHostName(hostName string) bool {
 	domain := models.DomainModel{}
 	return !repository.GetDB().Where(models.DomainModel{HostName: hostName}).First(&domain).RecordNotFound()
 }
+// GetByHostName returns a domain related to the given hostName if exists locally, also append the
+// locally sotred servers related to the domain found
 func (repository *DomainRepository) GetByHostName(hostName string) (domain models.DomainModel) {
 	domain = models.DomainModel{}
 	repository.GetDB().Where(models.DomainModel{HostName: hostName}).First(&domain)
 	domain.Servers = repository.GetServersOfDomain(&domain)
 	return
 }
+
+
 func (repository *DomainRepository) populateServers(domain *models.DomainModel) {
 	domain.Servers = repository.GetServersOfDomain(domain)
 
 }
+
+// UpdateSearchedTime update a domain SearchedAt in local storage to the current time
 func (repository *DomainRepository) UpdateSearchedTime(domain *models.DomainModel) {
 	domain.SearchedAt = time.Now()
 	repository.GetDB().Save(domain)
 }
+
+// GetLastSearched returns the last searched domains stored locally ordered desc by its
+// searched at property
 func (repository *DomainRepository) GetLastSearched(limit int) (domains []models.DomainModel) {
 	repository.GetDB().Limit(limit).Order("searched_at desc").Find(&domains)
-	for index, _ := range domains {
+	for index := range domains {
 		repository.populateServers(&domains[index])
 	}
 	return
 }
+// GetDomainFromExtern find for extern info about a domain than match with the given URL and return that.
+// If the server does not exists locally this is stored locally.
+// Also, if the servers returned does not exists locally, they are saved.
 func (repository *DomainRepository) GetDomainFromExtern(u url.URL) (domain models.DomainModel, err error) {
-	app.NormalizeUrl(&u)
+	app.NormalizeURL(&u)
 	hostName := u.Hostname()
 	domain.HostName = hostName
-	var report, report_err = repository.GetDetailedReport(hostName)
-	if report_err != nil {
-		err = report_err
+	var report, reportErr = repository.GetDetailedReport(hostName)
+	if reportErr != nil {
+		err = reportErr
 		return
 	}
-	app.NormalizeUrlWithScheme(&u, report.Protocol)
-	var scrap, scrap_err = repository.Scrape(u, 5)
-	if scrap_err != nil {
-		err = scrap_err
+	app.NormalizeURLWithScheme(&u, report.Protocol)
+	var scrap, scrapErr = repository.Scrape(u, 5)
+	if scrapErr != nil {
+		err = scrapErr
 		return
 	}
-	domain.Logo = app.NormalizePageIcoUrl(scrap.Preview.Icon, u)
+	domain.Logo = app.NormalizePageIcoURL(scrap.Preview.Icon, u)
 	domain.Title = scrap.Preview.Title
 	if report.Endpoints != nil {
 		domain.SslGrade = report.Endpoints[0].Grade

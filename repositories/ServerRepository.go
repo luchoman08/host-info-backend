@@ -24,7 +24,7 @@ func (repository *ServerRepository) GetServersForDomain(domain *models.DomainMod
 	return
 }
 
-// GetServerFromExtern find the server from external resources and stores it locally if not exists
+// GetServerFromExtern find the server from external resource
 func (repository *ServerRepository) GetServerFromExtern(endpoint ssllabs.Endpoint) (server models.ServerModel, err error) {
 	server = models.ServerModel{}
 	server.SslGrade = endpoint.Grade

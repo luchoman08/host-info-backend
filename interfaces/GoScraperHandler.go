@@ -1,7 +1,7 @@
 package interfaces
 
 import (
-	"github.com/badoux/goscraper"
+	"github.com/luchoman08/goscraper"
 	"net/url"
 )
 

@@ -54,7 +54,7 @@ func commands(
 		},
 		{
 			Name:    "get-local-domain",
-			Aliases: []string{"ch-ld"},
+			Aliases: []string{"g-l-d"},
 			Usage:   "Get local domain by host name",
 			Action: func(c *cli.Context) {
 				fmt.Println(domainService.GetDomain(c.Args()[0]))
@@ -69,7 +69,7 @@ func info() {
 	app.Author = "Luis Gerardo Manrique Cardona <luis.manrique@correounivalle.edu.co"
 	app.Version = "1.0.0"
 }
-func init() {
+func main() {
 	info()
 	commands(
 		ServiceContainer().GetDatabaseService(),

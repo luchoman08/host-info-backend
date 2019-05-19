@@ -3,10 +3,12 @@ Web service que se encarga de ofrecer funcionalidades para la visualización de 
 
 Este repositorio fue altamente influenciado por el repositorio 
 [service-pattern-go](https://github.com/irahardianto/service-pattern-go), el cual
-muestra una implementación usando inversión de control con injección de dependencias
+muestra una implementación de un proyecto básico de **muestra** usando inversión de control con injección de dependencias
 en busca de seguir los principios SOLID.
 
 ## Ejecutando en local
+Como generar el build de producción: `go build main.go router.go servicecontainer.go`
+
 Como ejecutar: `go run main.go router.go servicecontainer.go`
 
 Como iniciar las tablas de la base de datos:  `go run cli.go servicecontainer.go migrate`

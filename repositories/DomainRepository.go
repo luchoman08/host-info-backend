@@ -34,7 +34,7 @@ func (repository *DomainRepository) GetDomainFromLocal(u url.URL) models.DomainM
 
 // ExistByHostName check if a domain exists locally based in its HostName
 func (repository *DomainRepository) ExistByHostName(hostName string) bool {
-	return !repository.GetDB().Model(&models.DomainModel{}).Where(models.DomainModel{HostName: hostName}).RecordNotFound()
+	return !repository.GetDB().Where(models.DomainModel{HostName: hostName}).First(&models.DomainModel{}).RecordNotFound()
 }
 
 // GetByHostName returns a domain related to the given hostName if exists locally, also append the
@@ -53,9 +53,11 @@ func (repository *DomainRepository) populateServers(domain *models.DomainModel) 
 
 // UpdateSearchedTime update a domain SearchedAt in local storage to the current time
 func (repository *DomainRepository) UpdateSearchedTime(domain *models.DomainModel) {
-	domain.SearchedAt = time.Now()
-	repository.GetDB().Save(domain)
+	now := time.Now()
+	repository.GetDB().Model(&models.DomainModel{}).Update(&models.DomainModel{ID: domain.ID, SearchedAt:now})
 }
+// GetPageQuantity returns the number of pages than exists, deduced
+// from a page limit given
 func (repository *DomainRepository) GetPageQuantity(limit int) int {
 	var count int
 	repository.GetDB().Model(models.DomainModel{}).Count(&count)
@@ -65,13 +67,13 @@ func (repository *DomainRepository) GetPageQuantity(limit int) int {
 	quotient, remainder := count/limit, count%limit
 	if remainder == 0 {
 		return quotient
-	} else {
-		return quotient + 1
 	}
+	return quotient + 1
 }
+
 // GetLastSearched returns the last searched domains stored locally ordered desc by its
 // searched at property
-func (repository *DomainRepository) GetLastSearched(limit int, page int ) (domains []models.DomainModel) {
+func (repository *DomainRepository) GetLastSearched(limit int, page int) (domains []models.DomainModel) {
 	pagination.Paging(&pagination.Param{
 		DB:      repository.GetDB(),
 		Page:    page,

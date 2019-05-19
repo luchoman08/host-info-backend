@@ -31,9 +31,7 @@ func (repository *ServerRepository) GetServerFromExtern(endpoint ssllabs.Endpoin
 	server.IPAddress = endpoint.IPAddress
 	var whoIs, nonFatalErr = repository.GetWhoIsParsed(endpoint.IPAddress)
 	err = nonFatalErr
-	if err != nil {
-		err = err
-	} else {
+	if err == nil {
 		server.Country = whoIs["country"]
 		// In some cases, orgname is empty, if is the case
 		// check for descr value than tipically have the name

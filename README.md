@@ -7,6 +7,8 @@ muestra una implementación de un proyecto básico de **muestra** usando inversi
 en busca de seguir los principios SOLID.
 
 ## Ejecutando en local
+Como instalar las dependencias: `go get ./...` , suele generar un warning, pasalo por alto
+
 Como generar el build de producción: `go build main.go router.go servicecontainer.go`
 
 Como ejecutar: `go run main.go router.go servicecontainer.go`

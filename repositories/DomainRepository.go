@@ -118,8 +118,6 @@ func (repository *DomainRepository) GetDomainByHostNameUpdatedBefore(hostName st
 }
 
 // GetDomainFromExtern find for extern info about a domain than match with the given URL and return that.
-// If the server does not exists locally this is stored locally.
-// Also, if the servers returned does not exists locally, they are saved.
 func (repository *DomainRepository) GetDomainFromExtern(u url.URL) (
 	domain models.DomainModel,
 	endPoints []ssllabs.Endpoint,

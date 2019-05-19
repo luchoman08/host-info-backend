@@ -44,7 +44,10 @@ func (service *ServerService) GenerateServer(domain models.DomainModel, endpoint
 	}
 	return
 }
-
+func (service *ServerService) GetServerByIP(ip  string) models.ServerModel {
+	server, _ :=  service.GetServerFromLocal(ip)
+	return server
+}
 // UpdateLocalServersIfChanged check if
 func (service *ServerService) UpdateLocalServersIfChanged(servers []models.ServerModel) {
 	for _, server := range servers {
@@ -53,6 +56,7 @@ func (service *ServerService) UpdateLocalServersIfChanged(servers []models.Serve
 			service.CreateServer(&server)
 		} else if !service.EqualServers(server, localServer) {
 			server.ID = localServer.ID
+			server.DomainID = localServer.DomainID
 			service.UpdateServer(&server)
 		}
 	}

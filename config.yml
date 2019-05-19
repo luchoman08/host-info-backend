@@ -2,5 +2,5 @@ db_path: 'postgresql://host_info@localhost:26257/host_info?sslmode=disable'
 db_dialect: postgres
 port: 3000
 host: localhost
-ssll_retries: 2
-ssll_timeout: 1 # in seconds
+ssll_retries: 4
+ssll_timeout: 2 # in seconds

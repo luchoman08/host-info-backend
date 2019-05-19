@@ -1,4 +1,5 @@
 package models
+
 // Config represents the struct of all app configuration values
 type Config struct {
 	DbDialect   string `yaml:"db_dialect"`

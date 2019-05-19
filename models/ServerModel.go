@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 )
+
 // ServerModel represents a web server
 type ServerModel struct {
 	ID          uint        `json:"-"`

@@ -4,9 +4,11 @@ import (
 	"../app"
 	"../interfaces"
 	"../models"
+	"github.com/luchoman08/ssllabs"
 	"net/url"
 	"time"
 )
+
 // DomainRepository implements all the needed methods for access domain data
 type DomainRepository struct {
 	interfaces.SSLabsHandler
@@ -20,16 +22,19 @@ func (repository *DomainRepository) CreateDomain(domain *models.DomainModel) {
 	domain.SearchedAt = time.Now()
 	repository.GetDB().Create(domain)
 }
+
 // GetDomainFromLocal receive a url and returns the matching domain stored locally if exists
 func (repository *DomainRepository) GetDomainFromLocal(u url.URL) models.DomainModel {
 	app.NormalizeURL(&u)
 	return repository.GetByHostName(u.Hostname())
 }
+
 // ExistByHostName check if a domain exists locally based in its HostName
 func (repository *DomainRepository) ExistByHostName(hostName string) bool {
 	domain := models.DomainModel{}
 	return !repository.GetDB().Where(models.DomainModel{HostName: hostName}).First(&domain).RecordNotFound()
 }
+
 // GetByHostName returns a domain related to the given hostName if exists locally, also append the
 // locally sotred servers related to the domain found
 func (repository *DomainRepository) GetByHostName(hostName string) (domain models.DomainModel) {
@@ -38,7 +43,6 @@ func (repository *DomainRepository) GetByHostName(hostName string) (domain model
 	domain.Servers = repository.GetServersOfDomain(&domain)
 	return
 }
-
 
 func (repository *DomainRepository) populateServers(domain *models.DomainModel) {
 	domain.Servers = repository.GetServersOfDomain(domain)
@@ -60,10 +64,44 @@ func (repository *DomainRepository) GetLastSearched(limit int) (domains []models
 	}
 	return
 }
+
+// UpdateDomain update all the fields of a domain in the local storage, only works
+// if the domain given have the ID value in a existing value
+func (repository *DomainRepository) UpdateDomain(domain *models.DomainModel) {
+	repository.GetDB().Save(domain)
+}
+
+func (repository *DomainRepository) appendScrap(u url.URL, domain *models.DomainModel) error {
+	var scrap, err = repository.Scrape(u, 5)
+	if err != nil {
+		return err
+
+	}
+	domain.Logo = app.NormalizePageIcoURL(scrap.Preview.Icon, u)
+	domain.Title = scrap.Preview.Title
+	return err
+}
+
+// GetDomainByHostNameUpdatedBefore returns a domain only if locally exists a domain updated before than the given date
+func (repository *DomainRepository) GetDomainByHostNameUpdatedBefore(hostName string, t time.Time) (
+	domain models.DomainModel,
+	found bool) {
+	found = false
+	repository.GetDB().Where("updated_at < ?", t).First(&domain)
+	if domain.HostName != "" {
+		repository.populateServers(&domain)
+		found = true
+	}
+	return
+}
+
 // GetDomainFromExtern find for extern info about a domain than match with the given URL and return that.
 // If the server does not exists locally this is stored locally.
 // Also, if the servers returned does not exists locally, they are saved.
-func (repository *DomainRepository) GetDomainFromExtern(u url.URL) (domain models.DomainModel, err error) {
+func (repository *DomainRepository) GetDomainFromExtern(u url.URL) (
+	domain models.DomainModel,
+	endPoints []ssllabs.Endpoint,
+	err error) {
 	app.NormalizeURL(&u)
 	hostName := u.Hostname()
 	domain.HostName = hostName
@@ -72,27 +110,18 @@ func (repository *DomainRepository) GetDomainFromExtern(u url.URL) (domain model
 		err = reportErr
 		return
 	}
+	endPoints = report.Endpoints
 	app.NormalizeURLWithScheme(&u, report.Protocol)
-	var scrap, scrapErr = repository.Scrape(u, 5)
-	if scrapErr != nil {
-		err = scrapErr
-		return
-	}
-	domain.Logo = app.NormalizePageIcoURL(scrap.Preview.Icon, u)
-	domain.Title = scrap.Preview.Title
+	repository.appendScrap(u, &domain)
 	domain.IsDown = report.Status != repository.ReadyState()
-	if !repository.ExistByHostName(domain.HostName) {
-		repository.CreateDomain(&domain)
-	} else {
+	if repository.ExistByHostName(domain.HostName) {
 		dbDomain := repository.GetDomainFromLocal(u)
 		repository.UpdateSearchedTime(&dbDomain)
 	}
-	var servers []models.ServerModel
-	for i := 0; i < len(report.Endpoints); i++ {
-		server, _ := repository.GetServer(domain, report.Endpoints[i])
-		servers = append(servers, server)
+	var sslGrades []string
+	for _, endPoint := range report.Endpoints {
+		sslGrades = append(sslGrades, endPoint.Grade)
 	}
-	domain.SslGrade = repository.GetMinorSSLGrade(servers)
-	domain.Servers = servers
+	domain.SslGrade = app.GetMinorSSLGradeFromList(sslGrades)
 	return
 }

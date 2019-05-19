@@ -62,7 +62,7 @@ func (k *kernel) injectDomainController(serverService interfaces.ServerService, 
 		GoScraperHandler: &scraper,
 		GORMHandler:      gH,
 		ServerService:    serverService}
-	domainService := &services.DomainService{DomainRepository: domainRepository}
+	domainService := &services.DomainService{DomainRepository: domainRepository, ServerService: serverService}
 	domainController := controllers.DomainController{DomainService: domainService}
 	k.DomainRepository = domainRepository
 	k.DomainController = domainController

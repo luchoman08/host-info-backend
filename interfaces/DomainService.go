@@ -3,6 +3,7 @@ package interfaces
 import (
 	"../models"
 )
+
 // DomainService provide an interface to acces the domain resources
 // repositories
 type DomainService interface {

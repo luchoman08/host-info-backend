@@ -54,8 +54,9 @@ func (repository *DomainRepository) populateServers(domain *models.DomainModel) 
 // UpdateSearchedTime update a domain SearchedAt in local storage to the current time
 func (repository *DomainRepository) UpdateSearchedTime(domain *models.DomainModel) {
 	now := time.Now()
-	repository.GetDB().Model(&models.DomainModel{}).Update(&models.DomainModel{ID: domain.ID, SearchedAt:now})
+	repository.GetDB().Model(&models.DomainModel{}).Update(&models.DomainModel{ID: domain.ID, SearchedAt: now})
 }
+
 // GetPageQuantity returns the number of pages than exists, deduced
 // from a page limit given
 func (repository *DomainRepository) GetPageQuantity(limit int) int {

@@ -44,6 +44,7 @@ func (service *ServerService) GenerateServer(domain models.DomainModel, endpoint
 	}
 	return
 }
+
 // GetServerByIP returns a local server searched by its ip
 func (service *ServerService) GetServerByIP(ip string) models.ServerModel {
 	server, _ := service.GetServerFromLocal(ip)

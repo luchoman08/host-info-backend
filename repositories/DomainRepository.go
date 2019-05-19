@@ -80,9 +80,6 @@ func (repository *DomainRepository) GetDomainFromExtern(u url.URL) (domain model
 	}
 	domain.Logo = app.NormalizePageIcoURL(scrap.Preview.Icon, u)
 	domain.Title = scrap.Preview.Title
-	if report.Endpoints != nil {
-		domain.SslGrade = report.Endpoints[0].Grade
-	}
 	domain.IsDown = report.Status != repository.ReadyState()
 	if !repository.ExistByHostName(domain.HostName) {
 		repository.CreateDomain(&domain)
@@ -95,6 +92,7 @@ func (repository *DomainRepository) GetDomainFromExtern(u url.URL) (domain model
 		server, _ := repository.GetServer(domain, report.Endpoints[i])
 		servers = append(servers, server)
 	}
+	domain.SslGrade = repository.GetMinorSSLGrade(servers)
 	domain.Servers = servers
 	return
 }

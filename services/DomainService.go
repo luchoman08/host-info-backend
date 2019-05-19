@@ -28,9 +28,10 @@ func (service *DomainService) updateOrSaveLocalDomainIfChanged(domain *models.Do
 		}
 	}
 	if foundFromOneOurAgo {
-		serversChanged := service.EqualSetOfServers(domain.Servers, localDomainOneHourAgo.Servers)
+		serversChanged := !service.EqualSetOfServers(domain.Servers, localDomainOneHourAgo.Servers)
 		if serversChanged {
 			domain.ID = localDomainOneHourAgo.ID
+			domain.LastMajorChange = time.Now()
 			service.UpdateDomain(domain)
 			prevServers := service.GetServersOfDomain(domain)
 			service.UpdateLocalServersIfChanged(domain.Servers)

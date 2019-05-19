@@ -21,6 +21,7 @@ type DomainRepository struct {
 // CreateDomain save in local storage a domain
 func (repository *DomainRepository) CreateDomain(domain *models.DomainModel) {
 	domain.SearchedAt = time.Now()
+	domain.LastMajorChange = time.Now()
 	repository.GetDB().Create(domain)
 }
 
@@ -88,7 +89,7 @@ func (repository *DomainRepository) GetDomainByHostNameUpdatedBefore(hostName st
 	domain models.DomainModel,
 	found bool) {
 	found = false
-	repository.GetDB().Where("updated_at < ?", t).First(&domain)
+	repository.GetDB().Where("last_major_change < ?", t).First(&domain)
 	if domain.HostName != "" {
 		repository.populateServers(&domain)
 		found = true

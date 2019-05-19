@@ -3,6 +3,7 @@ package services
 import (
 	"../interfaces"
 	"../models"
+	"../app"
 	"github.com/golang/glog"
 	"github.com/luchoman08/ssllabs"
 )
@@ -32,6 +33,20 @@ func (service *ServerService) GetServer(domain models.DomainModel, endpoint ssll
 		}
 		server.DomainID = domain.ID
 		service.CreateServer(&server)
+	}
+	return
+}
+
+
+// GetMinorSSLGrade returns the minor ssl grade from a collection of servers, if empty collection is given
+// return empty string
+func (service *ServerService ) GetMinorSSLGrade(servers []models.ServerModel) (ssllGrade string) {
+	ssllGrade = ""
+	if (len(servers) == 0) {
+		return
+	}
+	for _, server:= range servers {
+		ssllGrade = app.GetMinorSSLGrade(ssllGrade, server.SslGrade)
 	}
 	return
 }

@@ -32,7 +32,56 @@ func NormalizeURL(u *url.URL) {
 		u.Path = ""
 	}
 }
+// GetMinorSSLGradeFromList returns the minor ssl grade from list of grades
+// if empty list is given, empty string is returned
+func GetMinorSSLGradeFromList(grades []string) (minorGrade string) {
+	minorGrade = ""
+	for _, grade := range grades {
+		minorGrade = GetMinorSSLGrade(minorGrade, grade)
+	}
+	return
+}
 
+// GetMinorSSLGrade compares two SSL grades and return the major grade,
+// for example, if g1 = A and g2 is B, return B, also works with a grade
+// modifiers like + or -, if gi = A+ and g2 = A- ,  A+ is returned
+func GetMinorSSLGrade(g1 string, g2 string) (string) {
+	if g1 == "" && g2 != "" {
+		return g2
+	}
+	if g2 == "" && g1 != "" {
+		return g1
+	}
+	if g1 == g2 {
+		return g2
+	}
+	g1Runes := []rune(g1)
+	g2Runes := []rune(g2)
+	g1Grade := g1Runes[0]
+	g2Grade := g2Runes[0]
+	var g1Modifier, g2Modifier rune
+	if len(g1Runes) > 1 {
+		g1Modifier = g1Runes[0]
+	} else {
+		g1Modifier = 0
+	}
+	if len(g2Runes) > 1 {
+		g2Modifier = g2Runes[0]
+	} else {
+		g2Modifier = 0
+	}
+	// The major symbols are indexed before in the alphabet
+	if g1Grade > g2Grade {
+		return  g1
+	}
+	if g1Grade  == g2Grade {
+		if g1Modifier > g2Modifier {
+			return g1
+		}
+		return g2
+	}
+	return g2
+}
 // NormalizeURLWithScheme When a string url is parsed without scheme (protocol), the parsed Host route is empty
 // and the url Path is equal to the input string, but this is wrong, if this is
 // the case, the Path, Host and Scheme are corrected with this method

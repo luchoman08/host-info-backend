@@ -13,7 +13,7 @@ type DomainModel struct {
 	SearchedAt       time.Time     `json:"-"`
 	HostName         string        `gorm:"unique;not null" json:"host_name"`
 	DeletedAt        *time.Time    `sql:"index"  json:"-"`
-	Servers          []ServerModel `json:"servers"`
+	Servers          []ServerModel `json:"servers" gorm:"foreignkey:DomainID;association_autoupdate:false;association_autocreate:false;column:related_record"`
 	ServersChanged   bool          `json:"servers_changed"`
 	SslGrade         string        `json:"ssl_grade"`
 	PreviousSslGrade string        `json:"previous_ssl_grade"`

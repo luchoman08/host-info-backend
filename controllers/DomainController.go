@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"../interfaces"
-	"fmt"
 	"github.com/go-chi/render"
 	"github.com/luchoman08/ssllabs"
 	"net/http"
@@ -38,7 +37,6 @@ func (controller DomainController) ControllerGetLastSearched(w http.ResponseWrit
 		page = pageInt
 	}
 
-
 	domainResult := controller.ServiceGetLastSearched(limit, page)
 	render.JSON(w, r, domainResult)
 }
@@ -52,7 +50,6 @@ func (controller DomainController) ControllerGetServer(w http.ResponseWriter, r 
 		return
 	}
 	domain, err := controller.GetDomain(route)
-	fmt.Println(domain)
 	if err != nil {
 		switch err.(type) {
 		case ssllabs.RetriesExeed:

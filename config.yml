@@ -3,4 +3,5 @@ db_dialect: postgres
 port: 3000
 host: localhost
 ssll_retries: 2
+default_page_limit: 3
 ssll_timeout: 2 # in seconds

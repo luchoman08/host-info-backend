@@ -14,9 +14,10 @@ type DomainRepository interface {
 	GetDomainFromExtern(url url.URL) (models.DomainModel, []ssllabs.Endpoint, error)
 	ExistByHostName(string) bool
 	CreateDomain(*models.DomainModel)
+	GetPageQuantity(limit int) int
 	UpdateDomain(*models.DomainModel)
 	GetDomainByHostNameUpdatedBefore(hostName string, t time.Time) (domain models.DomainModel, found bool)
 	GetByHostName(string) models.DomainModel
 	UpdateSearchedTime(domain *models.DomainModel)
-	GetLastSearched(limit int) []models.DomainModel
+	GetLastSearched(limit int, page int) []models.DomainModel
 }

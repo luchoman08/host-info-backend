@@ -74,7 +74,7 @@ func (k *kernel) injectDomainController(serverService interfaces.ServerService, 
 		ServerService:    serverService}
 	domainService := &services.DomainService{DomainRepository: domainRepository, ServerService: serverService}
 	k.DomainService = domainService
-	domainController := controllers.DomainController{DomainService: domainService}
+	domainController := controllers.DomainController{DomainService: domainService, ConfigService: k.ConfigService}
 	k.DomainRepository = domainRepository
 	k.DomainController = domainController
 

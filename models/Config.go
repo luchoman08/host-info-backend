@@ -6,6 +6,7 @@ type Config struct {
 	DbPath      string `yaml:"db_path"`
 	Port        string `yaml:"port"`
 	Host        string `yaml:"host"`
+	DefaultPageLimit int `yaml:"default_page_limit"`
 	SsllRetries int    `yaml:"ssll_retries"`
 	SsllTimeout int    `yaml:"ssll_timeout"`
 }

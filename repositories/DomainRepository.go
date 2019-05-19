@@ -4,6 +4,7 @@ import (
 	"../app"
 	"../interfaces"
 	"../models"
+	"github.com/biezhi/gorm-paginator/pagination"
 	"github.com/luchoman08/ssllabs"
 	"log"
 	"net/url"
@@ -33,8 +34,7 @@ func (repository *DomainRepository) GetDomainFromLocal(u url.URL) models.DomainM
 
 // ExistByHostName check if a domain exists locally based in its HostName
 func (repository *DomainRepository) ExistByHostName(hostName string) bool {
-	domain := models.DomainModel{}
-	return !repository.GetDB().Where(models.DomainModel{HostName: hostName}).First(&domain).RecordNotFound()
+	return !repository.GetDB().Model(&models.DomainModel{}).Where(models.DomainModel{HostName: hostName}).RecordNotFound()
 }
 
 // GetByHostName returns a domain related to the given hostName if exists locally, also append the
@@ -56,11 +56,28 @@ func (repository *DomainRepository) UpdateSearchedTime(domain *models.DomainMode
 	domain.SearchedAt = time.Now()
 	repository.GetDB().Save(domain)
 }
-
+func (repository *DomainRepository) GetPageQuantity(limit int) int {
+	var count int
+	repository.GetDB().Model(models.DomainModel{}).Count(&count)
+	if limit <= 0 {
+		return 0
+	}
+	quotient, remainder := count/limit, count%limit
+	if remainder == 0 {
+		return quotient
+	} else {
+		return quotient + 1
+	}
+}
 // GetLastSearched returns the last searched domains stored locally ordered desc by its
 // searched at property
-func (repository *DomainRepository) GetLastSearched(limit int) (domains []models.DomainModel) {
-	repository.GetDB().Limit(limit).Order("searched_at desc").Find(&domains)
+func (repository *DomainRepository) GetLastSearched(limit int, page int ) (domains []models.DomainModel) {
+	pagination.Paging(&pagination.Param{
+		DB:      repository.GetDB(),
+		Page:    page,
+		Limit:   limit,
+		OrderBy: []string{"searched_at desc"},
+	}, &domains)
 	for index := range domains {
 		repository.populateServers(&domains[index])
 	}
@@ -70,7 +87,7 @@ func (repository *DomainRepository) GetLastSearched(limit int) (domains []models
 // UpdateDomain update all the fields of a domain in the local storage, only works
 // if the domain given have the ID value in a existing value
 func (repository *DomainRepository) UpdateDomain(domain *models.DomainModel) {
-	repository.GetDB().Save(domain)
+	repository.GetDB().Omit("servers").Update(domain)
 }
 
 func (repository *DomainRepository) appendScrap(u url.URL, domain *models.DomainModel) error {

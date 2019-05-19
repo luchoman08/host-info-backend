@@ -4,6 +4,7 @@ import (
 	"../app"
 	"../interfaces"
 	"../models"
+	"github.com/golang/glog"
 	"net/url"
 	"time"
 )
@@ -53,6 +54,7 @@ func (service *DomainService) GetDomain(route string) (models.DomainModel, error
 	app.NormalizeURL(u)
 	domain, endPoints, err := service.GetDomainFromExtern(*u)
 	if err != nil {
+		glog.Warningf("Error at get domain service: %s", err.Error())
 		return models.DomainModel{}, err
 	}
 	var servers []models.ServerModel
@@ -72,7 +74,11 @@ func (service *DomainService) GetDomain(route string) (models.DomainModel, error
 // ServiceGetLastSearched returns the last searched domains and limit these by the limit
 // argument, if the number of domains searched is less than the given limit, the existant
 // domains searched are returned
-func (service *DomainService) ServiceGetLastSearched(limit int) (domains []models.DomainModel) {
-	domains = service.GetLastSearched(limit)
+func (service *DomainService) ServiceGetLastSearched(limit int, page int) (pagedResult interfaces.DomainPagedResult) {
+	domains := service.GetLastSearched(limit, page)
+	pagedResult.Domains = domains
+	pagedResult.Page = page
+	pagedResult.Limit = limit
+	pagedResult.Pages = service.GetPageQuantity(limit)
 	return
 }

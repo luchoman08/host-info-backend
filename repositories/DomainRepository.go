@@ -5,6 +5,7 @@ import (
 	"../interfaces"
 	"../models"
 	"github.com/luchoman08/ssllabs"
+	"log"
 	"net/url"
 	"time"
 )
@@ -112,7 +113,10 @@ func (repository *DomainRepository) GetDomainFromExtern(u url.URL) (
 	}
 	endPoints = report.Endpoints
 	app.NormalizeURLWithScheme(&u, report.Protocol)
-	repository.appendScrap(u, &domain)
+	scrapErr := repository.appendScrap(u, &domain) // this error is not fatal
+	if scrapErr != nil {
+		log.Printf("scrap error was ocurred with host %s", domain.HostName)
+	}
 	domain.IsDown = report.Status != repository.ReadyState()
 	if repository.ExistByHostName(domain.HostName) {
 		dbDomain := repository.GetDomainFromLocal(u)

@@ -45,6 +45,10 @@ func (controller DomainController) ControllerGetServer(w http.ResponseWriter, r 
 			{
 				http.Error(w, http.StatusText(http.StatusPartialContent), http.StatusPartialContent)
 			}
+		case ssllabs.UnableToResolveDomain:
+			{
+				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			}
 		default:
 			{
 				http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)

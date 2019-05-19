@@ -21,11 +21,11 @@ func (service *DomainService) updateOrSaveLocalDomainIfChanged(domain *models.Do
 	existsLocally := service.ExistByHostName(domain.HostName)
 	localDomainOneHourAgo, foundFromOneOurAgo := service.GetDomainByHostNameUpdatedBefore(domain.HostName, oneHourBefore)
 	if !existsLocally {
-			service.CreateDomain(domain)
-			for _, server := range domain.Servers {
-				server.DomainID = domain.ID
-				service.ServiceCreateServer(&server)
-			}
+		service.CreateDomain(domain)
+		for _, server := range domain.Servers {
+			server.DomainID = domain.ID
+			service.ServiceCreateServer(&server)
+		}
 	}
 	if foundFromOneOurAgo {
 		serversChanged := service.EqualSetOfServers(domain.Servers, localDomainOneHourAgo.Servers)
@@ -51,6 +51,9 @@ func (service *DomainService) GetDomain(route string) (models.DomainModel, error
 	}
 	app.NormalizeURL(u)
 	domain, endPoints, err := service.GetDomainFromExtern(*u)
+	if err != nil {
+		return models.DomainModel{}, err
+	}
 	var servers []models.ServerModel
 	for _, endPoint := range endPoints {
 		server, _ := service.GenerateServer(domain, endPoint)

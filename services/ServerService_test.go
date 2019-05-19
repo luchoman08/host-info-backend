@@ -26,7 +26,7 @@ func TestServerService_EqualSetOfServers(t *testing.T) {
 	}
 	result1 := serverService.EqualSetOfServers(set1, set1)
 	assert.True(t, result1, fmt.Sprintf("Servers are equal, why false is returned?"))
-	result2 :=  serverService.EqualSetOfServers(set1, set2)
+	result2 := serverService.EqualSetOfServers(set1, set2)
 	assert.False(t, result2, fmt.Sprintf("Servers are equal, why false is returned?"))
 
 }

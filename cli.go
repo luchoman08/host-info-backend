@@ -58,7 +58,7 @@ func info() {
 	app.Author = "Luis Gerardo Manrique Cardona <luis.manrique@correounivalle.edu.co"
 	app.Version = "1.0.0"
 }
-func init() {
+func main() {
 	info()
 	commands(ServiceContainer().GetDatabaseService(), ServiceContainer().GetDomainRepository())
 	err := app.Run(os.Args)

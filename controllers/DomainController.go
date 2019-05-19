@@ -34,7 +34,7 @@ func (controller DomainController) ControllerGetServer(w http.ResponseWriter, r 
 	route := r.URL.Query().Get("host")
 
 	if route == "" {
-		http.Error(w, "host cannot be empty", 400)
+		http.Error(w, http.StatusText(http.StatusUnprocessableEntity), http.StatusUnprocessableEntity)
 		return
 	}
 	domain, err := controller.GetDomain(route)

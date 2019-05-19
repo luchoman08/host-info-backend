@@ -42,7 +42,7 @@ func (repository *ServerRepository) GetServerFromExtern(endpoint ssllabs.Endpoin
 			server.Owner = whoIs["descr"]
 		}
 	}
-	return server, err
+	return
 }
 // GetServerFromLocal find the server locally byy IPAddress and if it exists the it is returned
 func (repository *ServerRepository) GetServerFromLocal(ipAddress string) (server models.ServerModel) {

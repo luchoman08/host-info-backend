@@ -11,7 +11,10 @@ import (
 
 var app = cli.NewApp()
 
-func commands(dbService interfaces.DatabaseService, domainRepo interfaces.DomainRepository) {
+func commands(
+	dbService interfaces.DatabaseService,
+	domainService interfaces.DomainService,
+	serverService interfaces.ServerService) {
 	app.Commands = []cli.Command{
 		{
 			Name:    "migrate",
@@ -34,6 +37,14 @@ func commands(dbService interfaces.DatabaseService, domainRepo interfaces.Domain
 			},
 		},
 		{
+			Name:    "get-local-server",
+			Aliases: []string{"g-l-s"},
+			Usage:   "Get local server by ip",
+			Action: func(c *cli.Context) {
+				fmt.Println(serverService.GetServerByIP(c.Args()[0]))
+			},
+		},
+		{
 			Name:    "look-ip",
 			Aliases: []string{"l-ip"},
 			Usage:   "Look up for IP given a domain name",
@@ -42,11 +53,11 @@ func commands(dbService interfaces.DatabaseService, domainRepo interfaces.Domain
 			},
 		},
 		{
-			Name:    "check-if-local-domain",
+			Name:    "get-local-domain",
 			Aliases: []string{"ch-ld"},
-			Usage:   "Some usefull command",
+			Usage:   "Get local domain by host name",
 			Action: func(c *cli.Context) {
-				fmt.Println(domainRepo.ExistByHostName(c.Args()[0]))
+				fmt.Println(domainService.GetDomain(c.Args()[0]))
 			},
 		},
 	}
@@ -60,7 +71,10 @@ func info() {
 }
 func main() {
 	info()
-	commands(ServiceContainer().GetDatabaseService(), ServiceContainer().GetDomainRepository())
+	commands(
+		ServiceContainer().GetDatabaseService(),
+		ServiceContainer().GetDomainService(),
+		ServiceContainer().GetServerService())
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)

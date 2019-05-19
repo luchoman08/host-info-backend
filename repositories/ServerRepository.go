@@ -61,7 +61,7 @@ func (repository *ServerRepository) UpdateServer(server *models.ServerModel) {
 // GetServerFromLocal find the server locally byy IPAddress and if it exists the it is returned
 func (repository *ServerRepository) GetServerFromLocal(ipAddress string) (server models.ServerModel, found bool) {
 	found = false
-	repository.GetDB().Where(models.ServerModel{IPAddress: ipAddress}, ipAddress).First(&server)
+	repository.GetDB().Where(models.ServerModel{IPAddress: ipAddress}).First(&server)
 	if server.IPAddress == ipAddress {
 		found = true
 	}

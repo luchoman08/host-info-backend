@@ -20,6 +20,8 @@ type IServiceContainer interface {
 	Inject()
 	GetModels() []interface{}
 	GetDomainController() controllers.DomainController
+	GetServerService() interfaces.ServerService
+	GetDomainService() interfaces.DomainService
 	GetDatabaseService() interfaces.DatabaseService
 	GetDomainRepository() interfaces.DomainRepository
 	GetConfigService() interfaces.ConfigService
@@ -27,6 +29,8 @@ type IServiceContainer interface {
 
 type kernel struct {
 	DomainController controllers.DomainController
+	DomainService interfaces.DomainService
+	ServerService interfaces.ServerService
 	DatabaseService  interfaces.DatabaseService
 	ConfigService    interfaces.ConfigService
 	DomainRepository interfaces.DomainRepository
@@ -44,6 +48,12 @@ func (k *kernel) GetDomainController() controllers.DomainController {
 }
 func (k *kernel) GetDomainRepository() interfaces.DomainRepository {
 	return k.DomainRepository
+}
+func (k *kernel) GetDomainService() interfaces.DomainService{
+	return k.DomainService
+}
+func (k *kernel) GetServerService() interfaces.ServerService{
+	return k.ServerService
 }
 
 func (k *kernel) GetModels() []interface{} {
@@ -63,6 +73,7 @@ func (k *kernel) injectDomainController(serverService interfaces.ServerService, 
 		GORMHandler:      gH,
 		ServerService:    serverService}
 	domainService := &services.DomainService{DomainRepository: domainRepository, ServerService: serverService}
+	k.DomainService = domainService
 	domainController := controllers.DomainController{DomainService: domainService}
 	k.DomainRepository = domainRepository
 	k.DomainController = domainController
@@ -89,6 +100,7 @@ func (k *kernel) Inject() {
 	var whoIsHandler = infraestructures.WhoIsHandler{}
 	serverRepo := repositories.ServerRepository{GORMHandler: &gormHandler, WhoIsHandler: &whoIsHandler}
 	serverService := services.ServerService{ServerRepository: &serverRepo}
+	k.ServerService = &serverService
 	k.injectDomainController(&serverService, *client, db, &gormHandler)
 	k.injectDatabaseService(&gormHandler, k.GetModels())
 }

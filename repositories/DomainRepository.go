@@ -89,7 +89,7 @@ func (repository *DomainRepository) GetLastSearched(limit int, page int) (domain
 // UpdateDomain update all the fields of a domain in the local storage, only works
 // if the domain given have the ID value in a existing value
 func (repository *DomainRepository) UpdateDomain(domain *models.DomainModel) {
-	repository.GetDB().Omit("servers").Update(domain)
+	repository.GetDB().Update(domain)
 }
 
 func (repository *DomainRepository) appendScrap(u url.URL, domain *models.DomainModel) error {

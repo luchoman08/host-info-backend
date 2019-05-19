@@ -44,10 +44,12 @@ func (service *ServerService) GenerateServer(domain models.DomainModel, endpoint
 	}
 	return
 }
-func (service *ServerService) GetServerByIP(ip  string) models.ServerModel {
-	server, _ :=  service.GetServerFromLocal(ip)
+// GetServerByIP returns a local server searched by its ip
+func (service *ServerService) GetServerByIP(ip string) models.ServerModel {
+	server, _ := service.GetServerFromLocal(ip)
 	return server
 }
+
 // UpdateLocalServersIfChanged check if
 func (service *ServerService) UpdateLocalServersIfChanged(servers []models.ServerModel) {
 	for _, server := range servers {

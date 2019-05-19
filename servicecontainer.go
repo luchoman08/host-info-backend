@@ -29,8 +29,8 @@ type IServiceContainer interface {
 
 type kernel struct {
 	DomainController controllers.DomainController
-	DomainService interfaces.DomainService
-	ServerService interfaces.ServerService
+	DomainService    interfaces.DomainService
+	ServerService    interfaces.ServerService
 	DatabaseService  interfaces.DatabaseService
 	ConfigService    interfaces.ConfigService
 	DomainRepository interfaces.DomainRepository
@@ -49,10 +49,10 @@ func (k *kernel) GetDomainController() controllers.DomainController {
 func (k *kernel) GetDomainRepository() interfaces.DomainRepository {
 	return k.DomainRepository
 }
-func (k *kernel) GetDomainService() interfaces.DomainService{
+func (k *kernel) GetDomainService() interfaces.DomainService {
 	return k.DomainService
 }
-func (k *kernel) GetServerService() interfaces.ServerService{
+func (k *kernel) GetServerService() interfaces.ServerService {
 	return k.ServerService
 }
 

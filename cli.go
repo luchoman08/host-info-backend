@@ -69,7 +69,7 @@ func info() {
 	app.Author = "Luis Gerardo Manrique Cardona <luis.manrique@correounivalle.edu.co"
 	app.Version = "1.0.0"
 }
-func main() {
+func init() {
 	info()
 	commands(
 		ServiceContainer().GetDatabaseService(),

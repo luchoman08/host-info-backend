@@ -14,6 +14,6 @@ type ServerService interface {
 	EqualServers(s1, s2 models.ServerModel) bool
 	EqualSetOfServers(set1, set2 []models.ServerModel) bool
 	ServiceCreateServer(model *models.ServerModel)
-	GetServerByIP(ip  string) models.ServerModel
+	GetServerByIP(ip string) models.ServerModel
 	UpdateLocalServersIfChanged([]models.ServerModel)
 }
